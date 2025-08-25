@@ -1,96 +1,102 @@
 # FB Marketplace Scraper + Telegram Reporter
 
-A **Free and Open Source** project that monitors Facebook Marketplace for specific keywords and instantly reports new listings to your Telegram chats.  
-Powered by **Playwright** for scraping, **Express + EJS + Tailwind** for the dashboard, and **MongoDB** for state/history.
-
----
-
-## ✨ Features
-- 🔍 Scrapes FB Marketplace with Playwright
-- 🍪 Cookie-based authentication 
-- 📬 Instant Telegram notifications with captions & media 
-- 📊 Web dashboard (EJS + Tailwind) to:
-  - View service health, logs, and history of reported items.
-  - Manage runtime configuration (keywords, interval, proxy, Telegram settings).
-  - Import/export cookies.
-- 📈 Prometheus metrics at `/metrics` and JSON health at `/health`
-- 🗄 MongoDB backend with deduplication and history
-- 🚀 Docker-ready, installs Playwright browsers inside container.
+An advanced tool that continuously monitors **Facebook Marketplace** for chosen products keywords and instantly reports new listings to **Telegram**.  
+It comes with a sleek **dashboard** for control and insights, making it easy to run and manage automated scraping jobs.
 
 ---
 
 ## 📸 Preview
 
-### Dashboard  
+### Dashboard
+
 ![Dashboard Preview](./previews/dashboard.jpg)
 
-### History  
+### History
+
 ![Histories](./previews/history.jpg)
 
-### Telegram Alerts  
+### Telegram Alerts
+
 ![Telegram Alerts](./previews/alerts.jpg)
 
 ---
 
-## 📦 Installation
+## ✨ Key Features
 
-Clone and install dependencies:
+- 🔍 **Smart Scraping**  
+  Uses Playwright to collect listings efficiently fallback.
+- 🍪 **Secure Authentication**  
+  Works with fresh cookie JSON (Cookie-Editor / Playwright storageState).
+- 📬 **Telegram Delivery**  
+  Sends rich media messages, captions, and buttons to your chosen chats.
+- 📊 **Interactive Dashboard**  
+  Tailwind + EJS dashboard with logs, history, config editor, and system status.
+- 📈 **Observability**  
+  Health at `/health`, Prometheus metrics at `/metrics`, logs and detailed run stats.
+- 🗄 **Persistence & History**  
+  MongoDB stores seen listings to avoid duplicates and provides history view.
+- ⚡ **Performance**  
+  Designed for continuous scraping with concurrency control, retry logic, and fast diff-and-report pipeline.
+
+---
+
+## 🚀 How It Works
+
+1. **Authentication**  
+   Import Facebook cookies (JSON) into the dashboard. The scraper will reuse these cookies for headless sessions.
+
+2. **Scraping**
+
+   - Define Products keywords in the dashboard.
+   - The scraper performs parallel searches on Marketplace and fetches listings.
+   - Configurable interval (default 5 minutes).
+
+3. **Filtering & Deduplication**
+
+   - All listings are checked against the MongoDB `history` collection.
+   - Only **new/unseen** items are processed.
+
+4. **Reporting**
+
+   - Each new item is formatted and sent via the Telegram Bot API.
+   - Images, description, attributes, and inline button to open the listing.
+
+5. **Monitoring**
+   - `/dashboard` — status, uptime, config, history.
+   - `/health` — JSON snapshot with uptime, runs, failures, DB, Telegram config.
+   - `/metrics` — Prometheus-ready stats.
+
+---
+
+## ⚙️ Usage
+
+### Local Setup
 
 ```bash
 git clone https://github.com/tas33n/fb-marketplace-scraper.git
 cd fb-marketplace-scraper
 npm install
-````
-
-Install Playwright browsers (locally):
-
-```bash
 npx playwright install
 ```
 
----
+### Configuration
 
-## ⚙️ Configuration
+- Copy `.env.example` → `.env`
+- Edit `config.json` with your:
 
-1. Copy the example env file:
+  - Cookies path (`fb-cookies.json`)
+  - Telegram bot token and chat IDs
+  - MongoDB URI and DB name
+  - Scrape keywords and interval
 
-   ```bash
-   cp .env.example .env
-   ```
-
-2. Edit `config.json` or environment variables:
-
-   * **Dashboard key**: `DASHBOARD_KEY`
-   * **Facebook cookies path**: `FB_COOKIES_PATH` (default: `fb-cookies.json`)
-   * **Telegram**: `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_IDS`
-   * **MongoDB**: `DATABASE_URL`, `DB_NAME`
-   * **Scraping**: `SCRAPE_KEYWORDS`, `SCRAPE_INTERVAL_SECONDS`, etc.
-
-3. Import fresh cookies (via Cookie-Editor JSON) into `fb-cookies.json`.
-
----
-
-## ▶️ Running
-
-Development (with logging, non-headless):
+### Running
 
 ```bash
-npm run dev
+npm run dev   # Development (headful Playwright, verbose logs)
+npm start     # Production (headless, optimized)
 ```
 
-Production (headless Playwright, optimized logging):
-
-```bash
-npm start
-```
-
-Access the dashboard at [http://localhost:3000](http://localhost:3000).
-
----
-
-## 🐳 Docker
-
-Build and run:
+### Docker
 
 ```bash
 docker build -t fb-mp-scraper .
@@ -99,34 +105,24 @@ docker run -it --rm -p 3000:3000 \
   fb-mp-scraper
 ```
 
-By default it uses port **3000** (configurable in `config.json` or env).
+---
+
+## 📊 Performance & Scalability
+
+- Designed to handle **multiple keywords** concurrently.
+- Concurrency is configurable (default: 3).
+- Automatic retries and timeout handling for enrichment requests.
+- Streamlined diff-and-report pipeline: new items are **sent instantly** without waiting for the entire batch to finish.
+- MongoDB ensures deduplication and quick lookups.
 
 ---
 
-## 🤝 Contributing
+## 📬 Contact
 
-PRs are welcome! This is a community-driven project. Ideas, bug reports, and feature requests are encouraged.
+For inquiries, demos, or deployment details, feel free to reach out:
 
-* Fork and branch from `main`.
-* Follow ES6+ best practices.
-* Keep code modular (`/src/scraper`, `/src/services`, `/src/views`).
-* Add/update documentation where necessary.
+- Email: [farhanisteak84@gmail.com](mailto:farhanisteak84@gmail.com)
+- Telegram: [@lamb3rt](https://t.me/lamb3rt)
+- GitHub: [Tas33n](https://github.com/tas33n)
 
----
-
-## 🔧 Tech Stack
-
-* **Node.js** (Express, EJS, TailwindCSS via CDN)
-* **Playwright** for scraping
-* **MongoDB** for persistence
-* **Telegram Bot API** for notifications
-* **Docker** for containerization
-* **Prometheus** for metrics
-
----
-
-## 📜 License
-
-MIT © [Tas33n](https://github.com/tas33n)&#x20;
-
-````
+```
